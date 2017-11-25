@@ -4,6 +4,7 @@
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
 
 
 \author{Cui Hongrui, Sha Jinrui}
@@ -81,9 +82,9 @@ big spread lemma.
   \begin{equation}
     Pr[D < d^*] \leq (\frac{\delta me}{2n})^{\delta m/2} \leq 2^{[(1-\omega)\frac{\delta}{2}+\omega]m}
   \end{equation}
-  
+
   \paragraph{Bounding $Pr[B, D \geq d^*]$}
-  First I would like to re state the lemma~8 in the original work \cite{corrigan2016balloon}, because this lemma is useful in the proof of big spread lemma.
+  First I would like to re-state the lemma~8 in the original work \cite{corrigan2016balloon}, because this lemma is useful in the proof of big spread lemma.
   \begin{lemma}\label{lemma::randommap}
     Let $(R_1,\dots,R_d)$ be random variables respecting integers sampled uniformly, but without replacement, from $\{1,\dots,n\}$. Write the $R$s in ascending
     order as $(Y_1,\dots,Y_d)$, and let $Y_0 = 0$, and $Y_{d+1} = n$. Next define $L = (L_1,\dots,L_{d+1})$, where $L_i = Y_i - Y_{i-1}$. Then for all functions
@@ -98,13 +99,13 @@ big spread lemma.
   if bad event $B$ happens, then it is one. Using this lemma, we can define a permutation on those integers that if it appears in a bad set, then we shift it with
   the first $n_0+1$ integers in the list, and thus we can only focus on the first few elements on the list without changing the result. As lemma~\ref{lemma::randommap}
   require the list to be mutually distinct, we have to transform the random list in to a distinct one first.
-  
+
   \textit{Step~1:} Bad event $B$ occurs whenever there is a subset $S^\prime \subseteq X = (X_1,\dots,X_{\delta m+1})$ of size at most $(n_0 + 1)$, such that
   $\sum_{X_i \in S^\prime}{(X_i - X_{i-1})} \geq (1-2^{-\omega})n$. Whenever bad event B occurs, there is also a subset $S_{dist}^\prime$ of distinct integers that
   also satisfy the sum equation, and also has the size $(n_0 + 1)$. (This is because if duplicate exists, we can always delete duplicates, without changing the sum,
   and then add new integers to make the sum even bigger.)
   thus we can use lemma~\ref{lemma::randommap} to simplify calculation.
-  
+
   \textit{Step~2:} we consider the case there is explicitly $d$ distinct integers in the list $R$, and then use union bound to deduce the final probability.
   Write the $d$ distinct integers in $R$ is ascending order as $Y = (Y_1,\dots,Y_d)$. We want to bound the probability that some subset $Y_{dist}^\prime$ of size
   $n_0$ is bad. (Note that the only change from the original lemma is that I changed $m$ into $n_0$.) Then define $L_i$ as in lemma~\ref{lemma::randommap}.
@@ -117,7 +118,7 @@ big spread lemma.
     &= Pr[f(L_1,\dots,L{d+1}) = 1|D = d] \\
     &= Pr[(L_1 + \dots + L_{n_0+1}) \geq (1-2^{-\omega})n|D = d]
   \end{align}
-  
+
   \textit{Step~3:} the event defined above can only happen when the other $d - (n_0 + 1)$ integers falls into the right most $2^{-\omega}n$ bins, and then
   we have:
   \begin{equation}
@@ -148,16 +149,118 @@ big spread lemma.
 In the original work \cite{corrigan2016balloon}, the author proves a \textit{consecutive avoiding property} over all possible size of $m$, and
 then for m of fixed size ($n/64$), proves a tighter \textit{everywhere avoiding property}. The reason of combining these two property is that
 the first one allows the number pebbles to be arbitrary within a given range. In particular, one can consider $m$ to have the same number of the
-pebbles the adversary owns. In order to prove a tighter bound on $S \cdot T$ (like in part~b of Lemma~31), one needs to first apply consecutive 
-avoiding property and then use the everywhere avoiding property. What we want to do is to use the derived big spread lemma~\ref{lemma::bigspreadvar}
-to sum up over the choice of $n_0$, while keeping the amount of $m$ as we want throughout the proof.
+pebbles the adversary owns. In order to prove a tighter bound on $S \cdot T$ (like in part~b of Lemma~31), one needs to first apply consecutive
+avoiding property and then use the everywhere avoiding property. What we want to do is to acquire the probability that given at most $n_0$ pebbles,
+any $m$ pebbles on a standard sandwich graph is an $(n_0, m, 2/2^\omega)$ avoiding set.
+
+\begin{lemma}[Everywhere Avoiding]\label{lemma::everyavoid}
+  Let $G = (U \bigcup V, E)$, be a $\delta$-random sandwich graph on 2n vertices. Then for all positive integer $m$ that satisfy the assumption
+  of lemma~\ref{lemma::bigspreadvar}, and $n_0$ such that $n_0$ is no bigger than the upper bound of $m$, we have that given $n_0$ pebbles at most,
+  every subset $V^\prime \subseteq V$ of size $m$, is a $(n_0, n/2^\omega)$ avoiding set with probability at least 
+  $1 - (\frac{n}{m})^m \cdot 2^{(1-\omega)\frac{\delta m}{2}} \cdot (2^{\omega m} + 2^{1 + (n_0 + 1) \omega})$
+\end{lemma}
+
+\begin{proof}
+  Fix the size of $n_0$ and $m$, all we need to do is to apply union bound to all possible choice of $V^\prime$, which has $\binom{n}{m}$ in total.
+  Apply this inequality to simply the bound:
+  \begin{equation}
+    \binom{n}{m} = \frac{n \times (n-1) \times \dots \times (n-m+1)}{m \times (m-1) \times \dots 1} \leq
+    \frac{n^m}{m^m} = frac{n}{m}^m
+  \end{equation}
+  And thus by lemma~\ref{lemma::bigspreadvar}, we have the probability that a single bad event occurs is at most 
+  $2^{(1-\omega)\frac{\delta}{2}m} \cdot (2^{\omega m}+2^{\omega+1}2^{\omega n_0})$, and thus the probability that
+  for all choice of $V^\prime$, the bad event occurs is at most 
+  $(\frac{n}{m})^m \cdot 2^{(1-\omega)\frac{\delta m}{2}} \cdot (2^{\omega m} + 2^{1 + (n_0 + 1) \omega})$.
+  And thus the lemma is proved.
+\end{proof}
 
 \section{A bound on the pebbling moves of random sandwich graph}
+\paragraph{Bounding pebbling moves}
+And now for the sake of our own objective, we would like to calculate the bound of re-computation of a subset of vertices on any layer. To do this, we
+need to first compute the moves needed to pebble a subset of vertices. First define a variable to denote the pebbling moves needed to pebble a subset of
+$m$ vertices on the condition that except on those $m$ vertices, there can be at most $n_0$ pebbles on any vertices of the graph.
+
+\begin{definition}
+  Let $G$ be a stack of random sandwich graphs. Then define $T_r$ be the pebbling moves needed to pebble a subset $V^\prime$ of vertices on layer $r$, which has
+  not received any pebble on the beginning of the moves, and at the end of the moves, the topologically last one receives a pebble. The condition is that there
+  can only be at most $n_0$ pebbles on the graph.
+\end{definition}
+
+Now that we have defined the amount to calculate, we can use induction reasoning to calculate $T_r$.
+
+\begin{lemma}\label{lemma::rbound}
+  Given the average case that $T_0 = \frac{m+n}{2}$, we have:
+  \begin{equation}
+    T_r \leq -\frac{m}{\frac{n}{m2^\omega} - 1} + (\frac{n}{m2^\omega})^r(\frac{m+n}{2}+\frac{m}{\frac{n}{m2^\omega} - 1})
+  \end{equation}
+  where $0 \leq r \leq d$, $d$ is the layer of the stack of random sandwich graph.
+\end{lemma}
+\begin{proof}
+  By the definition of $T_r$, we have that $T_r \leq m + \frac{n}{m2^\omega}T_{r-1}$. And thus we have:
+  \begin{align}
+    T_r &\leq m + \frac{n}{m2^\omega}T_{r-1}\\
+    T_r + \frac{m}{\frac{n}{m2^\omega} - 1} &\leq \frac{n}{m2^\omega}(T_{r-1} + \frac{m}{\frac{n}{m2^\omega} - 1})\\
+  \end{align}
+  If we define $Y_r = T_r + \frac{m}{\frac{n}{m2^\omega} - 1}$, and change the inequality into equality, we can have
+  \begin{equation}
+    Y_r = (\frac{n}{m2^\omega})^r \cdot Y_0
+  \end{equation}
+  And thus $T_r \leq -\frac{m}{\frac{n}{m2^\omega} - 1} + (\frac{n}{m2^\omega})^r(\frac{m+n}{2}+\frac{m}{\frac{n}{m2^\omega} - 1})$.
+\end{proof}
+
+Then we define the lower bound of re-computation needed in the process discussed above.
+\begin{definition}
+  Let Recompute(r) be the pebbling moves needed in the process to pebble m vertices on layer r. More specifically, the pebbling moves needed to
+  pebble the direct predecessors of those m vertices.
+\end{definition}
+
+By the definition of $Recompute(r)$ and lemma~\ref{lemma::rbound}, one can see that $Recompute(r) \geq -m + T_r$, and it grows exponentially with r.
 
 \section{A comparison on re-computation and DRAM fetching}
+\paragraph{Different strategy}
+The pebbling diagram intends to model the computation on ASIC circuits, that is, the computation of underlying cryptographic hashing function,
+like SHA-256, is relatively very fast\footnote{Some pipelining circuits can reach the frequency as fast as 1THz %citation needed
+}, and those logic takes the major size of the circuit. The memory section, on the other hand, is relatively small. And thus in the model, we can
+model the adversary to have small amount of pebbles, and try to bound the pebbling moves of the adversary.
 
-\section{Simulation on common parameter settings}
+However, this model cannot extend to honest users, whose considerable amount of time is used in fetching previously computed blocks from DRAM, and this
+operation takes constant time. Intuitively, if the adversary, or the manufacturer of ASIC can combine those two advantages, could a more devastating attack
+be constructed? Especially when DRAM circuits are getting faster and relatively cheaper. On the other hand, when such case occurs, then total computational
+time depends not only on the speed of hashing, but also on the DRAM latency. In this case, will the increase in hashing power (non-memory hard hashing power)
+yields a less attractive increase in the throughput, and therefore render the solution of ASIC as a cracking machine useless?
 
+Our preliminary work shows that given contemporary parameter settings, when the layer of the graph gets greater than 4, the DRAM strategy will definitely
+start to have an advantage.
+
+\section{Comparison on common parameter settings}
+\paragraph{Parameter setting}
+In the following comparison section, we take the block size, which the output length of the underlying cryptographic hashing function to be 256~bit,
+and the block in one layer of the graph to be $2^22$\footnote{The authors of Balloon Hashing recommended the space parameter to be 256MB for authentication servers.}
+. We take $\omega = 3$, and the ratio of the latency of fetching a DRAM block over the ratio of
+the time needed to output a block from Random Oracle, $c = 1000$.
+
+\paragraph{Comparison}
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|}
+     \hline
+     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+     Layer & Ratio \hline\\
+     1 & 0.01 \\
+     2 & 0.04 \\
+     3 & 0.15 \\
+     4 & 0.62 \\
+     5 & 2.46 \\
+     \hline
+   \end{tabular}
+  \caption{The ratio of re-computation over DRAM fetching}\label{table::recomp-dram-ratio}
+\end{table}
+
+As shown in table~ref{table::recomp-dram-ratio}, given our parameter setting, the ratio of re-computation becomes bigger than 1 when the graph get deeper than 4 layers.
+However, this is a loose bound. Firstly, the DRAM latency is computed as $\delta mc$, where $c = 1000$, this does not take into account the case when the $\delta m$ 
+predecessors `collide' with each other, that is, when one fetch benefit another pebbling process. Secondly, the re-computation was take the upper bound. Thirdly, an
+optimal strategy may combine these two means, using fetching for some vertices, and re-computation for others. Nevertheless, this rather loose bound shows that if
+the layer of the graph gets deeper, pure re-computation will never be a useful solution, no matter what.
 
 \bibliography{refEBH}
 \bibliographystyle{plain}
