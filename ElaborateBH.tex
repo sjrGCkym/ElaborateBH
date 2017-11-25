@@ -242,10 +242,10 @@ the time needed to output a block from Random Oracle, $c = 1000$.
 \paragraph{Comparison}
 \begin{table}
   \centering
-  \begin{tabular}{|c|c|}
+  \begin{tabular}{|c|c|}
      \hline
      % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-     Layer & Ratio \hline\\
+     Layer & Ratio \\ \hline
      1 & 0.01 \\
      2 & 0.04 \\
      3 & 0.15 \\
@@ -256,7 +256,7 @@ the time needed to output a block from Random Oracle, $c = 1000$.
   \caption{The ratio of re-computation over DRAM fetching}\label{table::recomp-dram-ratio}
 \end{table}
 
-As shown in table~ref{table::recomp-dram-ratio}, given our parameter setting, the ratio of re-computation becomes bigger than 1 when the graph get deeper than 4 layers.
+As shown in table~\ref{table::recomp-dram-ratio}, given our parameter setting, the ratio of re-computation becomes bigger than 1 when the graph get deeper than 4 layers.
 However, this is a loose bound. Firstly, the DRAM latency is computed as $\delta mc$, where $c = 1000$, this does not take into account the case when the $\delta m$ 
 predecessors `collide' with each other, that is, when one fetch benefit another pebbling process. Secondly, the re-computation was take the upper bound. Thirdly, an
 optimal strategy may combine these two means, using fetching for some vertices, and re-computation for others. Nevertheless, this rather loose bound shows that if
